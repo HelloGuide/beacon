@@ -25,8 +25,10 @@ package com.example.androidchoi.beacontest;
 
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
@@ -225,14 +227,25 @@ public class RecoBackgroundMonitoringService extends Service implements RECOMoni
         Log.i("BackMonitoringService", "popupNotification()");
         String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(new Date());
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.mipmap.ic_launcher)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.image_1))
+                .setColor(getResources().getColor(R.color.colorPrimary))
                 .setContentTitle(msg + " " + currentTime)
-                .setContentText(msg);
-
+                .setContentText(msg)
+                .setContentIntent(getPendingIntent());
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         builder.setStyle(inboxStyle);
         nm.notify(mNotificationID, builder.build());
         mNotificationID = (mNotificationID - 1) % 1000 + 9000;
+    }
+
+    private PendingIntent getPendingIntent(){
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        intent.putExtra("noti_extra", "noti_extra");
+        PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, intent, 0);
+
+        return pendingIntent;
     }
 
     @Override

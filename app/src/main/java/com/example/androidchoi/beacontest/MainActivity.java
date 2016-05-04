@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Intent intent = getIntent();
+        String string = intent.getStringExtra("noti_extra");
+
+        TextView textView = (TextView)findViewById(R.id.textView);
+        textView.setText(string);
     }
 
     @Override
