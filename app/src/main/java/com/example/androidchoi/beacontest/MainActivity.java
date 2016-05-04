@@ -1,8 +1,11 @@
 package com.example.androidchoi.beacontest;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
@@ -64,13 +67,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    Log.i("MainActivity", "onMonitoringToggleButtonClicked off to on");
                     Intent intent = new Intent(MainActivity.this, RecoBackgroundMonitoringService.class);
                     startService(intent);
                 }
                 else{
+                    Log.i("MainActivity", "onMonitoringToggleButtonClicked off to on");
                     stopService(new Intent(MainActivity.this, RecoBackgroundMonitoringService.class));
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(this.isBackgroundMonitoringServiceRunning(this)) {
+            ToggleButton toggle = (ToggleButton)findViewById(R.id.toggle);
+            toggle.setChecked(true);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    private boolean isBackgroundMonitoringServiceRunning(Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo runningService : am.getRunningServices(Integer.MAX_VALUE)) {
+            if(RecoBackgroundMonitoringService.class.getName().equals(runningService.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
